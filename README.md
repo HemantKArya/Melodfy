@@ -43,7 +43,7 @@ We welcome contributions from the community! Please refer to the CONTRIBUTING.md
 **Credits:**
 
 * This project is developed by Hemant Kumar which is a GUI Interface for [Piano Transcription](https://github.com/bytedance/piano_transcription)..
-* We acknowledge the contributions of 
+* Melodfy is heavely dependent on these projects -
     
     1. [Piano Transcription](https://github.com/bytedance/piano_transcription) by [ByteDance](https://github.com/bytedance)
     2. [Piano Transcription Inference](https://github.com/qiuqiangkong/piano_transcription_inference) by [qiuqiangkong](https://github.com/qiuqiangkong)
