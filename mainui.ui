@@ -16,7 +16,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Melodfy</string>
   </property>
   <property name="styleSheet">
    <string notr="true">
@@ -86,7 +86,7 @@ color: #8e8fa5;
              <string notr="true">color: #e7e7e7;</string>
             </property>
             <property name="text">
-             <string>Audio2Midi</string>
+             <string>Melodfy✨</string>
             </property>
            </widget>
           </item>
