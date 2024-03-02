@@ -29,6 +29,7 @@ git clone https://github.com/HemantKArya/Melodfy.git
 2. **Install dependencies:**
 
 Refer to the `requirements.txt` file for a list of required libraries and install them using your preferred package manager (e.g., `pip install -r requirements.txt`).
+And make sure FFMPEG is already installed in your system and availible through 'PATH'.
 
 3. **Run the application:**
 
