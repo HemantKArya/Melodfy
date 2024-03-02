@@ -1,32 +1,15 @@
 import os
 import numpy as np
 import time
-import librosa
+# import librosa
+from librosa.filters import mel as librosa_mel_fn
+from librosa import stft, power_to_db
 from pathlib import Path
-import onnxruntime
-
-import torch
 
 from utilities import (create_folder, get_filename, RegressionPostProcessor, 
     write_events_to_midi)
-# from .models import Regress_onset_offset_frame_velocity_CRNN, Note_pedal
-# from .pytorch_utils import move_data_to_device, forward
 import config
 
-
-from torchlibrosa.stft import Spectrogram, LogmelFilterBank
-
-
-def move_data_to_device(x):
-    if 'float' in str(x.dtype):
-        x = torch.Tensor(x)
-    elif 'int' in str(x.dtype):
-        x = torch.LongTensor(x)
-    else:
-        return x
-
-    # return x.to(device)
-    return x
 
 
 def append_to_dict(dict, key, value):
@@ -47,7 +30,6 @@ def output_to_dict(note_output,pedal_output):
             'pedal_frame_output': pedal_output[2]
             }
     return full_output_dict
-
 
 
 def forward(model, x, 
@@ -87,15 +69,20 @@ def forward(model, x,
     # midfeat = 1792
     # momentum = 0.01
 
-        # Spectrogram extractor
-    spectrogram_extractor = Spectrogram(n_fft=window_size, 
-            hop_length=hop_size, win_length=window_size, window=window, 
-            center=center, pad_mode=pad_mode, freeze_parameters=True)
+    
 
-        # Logmel feature extractor
-    logmel_extractor = LogmelFilterBank(sr=sample_rate, 
-            n_fft=window_size, n_mels=mel_bins, fmin=fmin, fmax=fmax, ref=ref, 
-            amin=amin, top_db=top_db, freeze_parameters=True)
+        # Spectrogram extractor
+    # spectrogram_extractor = Spectrogram(n_fft=window_size, 
+    #         hop_length=hop_size, win_length=window_size, window=window, 
+    #         center=center, pad_mode=pad_mode, freeze_parameters=True)
+
+    #     # Logmel feature extractor
+    # logmel_extractor = LogmelFilterBank(sr=sample_rate, 
+    #         n_fft=window_size, n_mels=mel_bins, fmin=fmin, fmax=fmax, ref=ref, 
+    #         amin=amin, top_db=top_db, freeze_parameters=True)
+    
+    logmel = librosa_mel_fn(sr=sample_rate, n_fft=window_size, n_mels=mel_bins,
+            fmin=fmin, fmax=fmax).T
 
     output_dict = {}
     # device = next(model.parameters()).device
@@ -110,15 +97,24 @@ def forward(model, x,
         if pointer >= len(x):
             break
 
-        batch_waveform = move_data_to_device(x[pointer : pointer + batch_size])
+        batch_waveform = x[pointer : pointer + batch_size]
         pointer += batch_size
 
+        batch_waveform = stft(y=batch_waveform,n_fft=window_size,
+            hop_length=hop_size, win_length=window_size, window=window,
+            center=center, pad_mode=pad_mode,)
         
-        batch_waveform = spectrogram_extractor(batch_waveform)
-        batch_waveform = logmel_extractor(batch_waveform)
+        mel_spectrogram = np.dot(np.abs(np.transpose(batch_waveform,axes=(0,2,1))) ** 2, logmel)
+        logmel_spectrogram = power_to_db(
+            mel_spectrogram, ref=ref, amin=amin, top_db=top_db)
+        batch_waveform = np.expand_dims(logmel_spectrogram, axis=1)
+
+
+        # batch_waveform = spectrogram_extractor(batch_waveform)
+        # batch_waveform = logmel_extractor(batch_waveform)
 
             # note_output,pedal_output = model(batch_waveform)
-        note_output,pedal_output = model(None,{'input':to_numpy(batch_waveform).astype(np.float32)})
+        note_output,pedal_output = model(None,{'input':batch_waveform.astype(np.float32)})
         batch_output_dict = output_to_dict(note_output,pedal_output)
 
         for key in batch_output_dict.keys():
@@ -132,15 +128,15 @@ def forward(model, x,
     return output_dict
 
 
-def to_numpy(tensor):
-    return tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()
+# def to_numpy(tensor):
+#     return tensor.detach().cpu().numpy() if tensor.requires_grad else tensor.cpu().numpy()
 
 
 
 
 class PianoTranscription(object):
     def __init__(self, model,checkpoint_path=None, 
-        segment_samples=16000*10, device=torch.device('cuda')):
+        segment_samples=16000*10):
         """Class for transcribing piano solo recording.
 
         Args:
@@ -149,17 +145,8 @@ class PianoTranscription(object):
           segment_samples: int
           device: 'cuda' | 'cpu'
         """
-        # if not checkpoint_path: 
-        #     checkpoint_path='{}/piano_transcription_inference_data/note_F1=0.9677_pedal_F1=0.9186.pth'.format(str(Path.home()))
-        # print('Checkpoint path: {}'.format(checkpoint_path))
 
-        # if not os.path.exists(checkpoint_path) or os.path.getsize(checkpoint_path) < 1.6e8:
-        #     create_folder(os.path.dirname(checkpoint_path))
-        #     print('Total size: ~165 MB')
-        #     zenodo_path = 'https://zenodo.org/record/4034264/files/CRNN_note_F1%3D0.9677_pedal_F1%3D0.9186.pth?download=1'
-        #     os.system('wget -O "{}" "{}"'.format(checkpoint_path, zenodo_path))
-
-        print('Using {} for inference.'.format(device))
+        print('Using CPU for inference.')
 
         self.segment_samples = segment_samples
         self.frames_per_second = config.frames_per_second
@@ -169,10 +156,6 @@ class PianoTranscription(object):
         self.frame_threshold = 0.1
         self.pedal_offset_threshold = 0.2
 
-
-
-        # self.onnx_session = onnxruntime.InferenceSession(checkpoint_path)
-        # self.onnx_session = onnxruntime.InferenceSession("/content/full_model.onnx")
         self.model = model
         # print("loaded model")
 

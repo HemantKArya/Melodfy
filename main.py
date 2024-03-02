@@ -1,19 +1,18 @@
 from PySide6.QtWidgets import QApplication, QWidget,QFileDialog,QMessageBox
 from PySide6.QtCore import QAbstractListModel,Qt,QThreadPool,QRunnable,Slot,Signal,QObject,QSize
-from PySide6.QtGui import QTextOption
+from PySide6.QtGui import QTextOption,QIcon
 
 from inference import PianoTranscription
 from utilities import load_audio
 from config import sample_rate
 from mainui import Ui_Form
 import sys
-import onnxruntime
+from onnxruntime import InferenceSession
 import os
-import numpy as np
 import qtawesome as qta
-from threading import Thread
 from queue import Queue
 import time
+import webbrowser
 
 
 
@@ -23,8 +22,8 @@ isReady = False
 
 
 print('Loading model...')
-ort_session = onnxruntime.InferenceSession("./models/model.onnx")
-c = PianoTranscription(model=ort_session.run,device='cpu')
+ort_session = InferenceSession("./models/model.onnx")
+c = PianoTranscription(model=ort_session.run)
 print('Model loaded')
 
 def getDirectoryPathFromFilePath(filepath):
@@ -104,7 +103,6 @@ class Main_UI(QWidget, Ui_Form):
         super(Main_UI, self).__init__()
         self.setupUi(self)
         
-        
         self.threadpool = QThreadPool()
         # self.logBrowser.setWordWrapMode()
         # print("Multithreading with maximum %d threads" % self.threadpool.maxThreadCount())
@@ -135,6 +133,7 @@ class Main_UI(QWidget, Ui_Form):
         self.outputDirBtn.clicked.connect(self.setOutputDirectory)
         self.startBtn.clicked.connect(self.onStartBtn)
         self.resetItemsBtn.clicked.connect(self.resetItems)
+        self.githubBtn.clicked.connect(self.openGithubRepo)
         
     
 
@@ -214,14 +213,14 @@ class Main_UI(QWidget, Ui_Form):
             self.dlg.setStandardButtons(QMessageBox.Ok)
             
             self.dlg.setStyleSheet(u"QMessageBox{\n"
-                "font: bold 14px;}\nQPushButton{\n"
-"background-color: #ff8838;\n"
-"color: #f6fcf2;font: bold;\n"
-" min-width: 5em;\n"
-" padding: 3px;\n"
-"border:none;\n"
-"border-radius:10px;\n"
-"}")
+                u"font: bold 14px;}\nQPushButton{\n"
+u"background-color: #ff8838;\n"
+u"color: #f6fcf2;font: bold;\n"
+u" min-width: 5em;\n"
+u" padding: 3px;\n"
+u"border:none;\n"
+u"border-radius:10px;\n"
+u"}")
             self.dlg.show()
 
     def setBtnEnable(self):
@@ -255,10 +254,14 @@ class Main_UI(QWidget, Ui_Form):
             itemQueue.queue.clear()
         self.listModel.layoutChanged.emit()
         self.logBrowser.setText("x=x=x=x=x=x=x=Reset=x=x=x=x=x=x=x\n")
+    def openGithubRepo(self):
+        webbrowser.open('https://github.com/HemantKArya/Melodfy')
 
 
-
-app = QApplication(sys.argv)
-window = Main_UI()
-window.show()
-app.exec()
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon("./assets/melodfy_logo_rounded.png"))
+    window = Main_UI()
+    window.setWindowIcon(QIcon("./assets/melodfy_logo_rounded.png"))
+    window.show()
+    app.exec()

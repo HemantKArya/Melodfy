@@ -1,3 +1,7 @@
+'''
+This file contains some utility functions for audio and MIDI processing. referenced from Piano Transcription Inference.
+'''
+
 import os
 import numpy as np
 import audioread

@@ -1,3 +1,5 @@
+![Melodfy banner](./assets/melodfy_banner.png)
+
 ## Melodfy✨: AI-Powered Piano Audio to MIDI Converter 🎶
 
 Melodfy is an python application that utilizes the power of artificial intelligence (developed by ByteDance) to seamlessly convert audio recordings of piano playing into playable MIDI files. 
@@ -47,7 +49,7 @@ We welcome contributions from the community! Please refer to the CONTRIBUTING.md
     
     1. [Piano Transcription](https://github.com/bytedance/piano_transcription) by [ByteDance](https://github.com/bytedance)
     2. [Piano Transcription Inference](https://github.com/qiuqiangkong/piano_transcription_inference) by [qiuqiangkong](https://github.com/qiuqiangkong)
-    3. [Torchlibrosa](https://github.com/qiuqiangkong/torchlibrosa) by [qiuqiangkong](https://github.com/qiuqiangkong)
+  
 
 **Additional Information:**
 
