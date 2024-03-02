@@ -22,3 +22,5 @@ license = { text = "MIT License" }
 keywords = ["piano", "audio", "midi", "converter", "ai", "music", "melodfy", "melody", "melodify","audio-to-midi","qt","pyside6"]
 
 
+[tool.setuptools]
+py-modules = []

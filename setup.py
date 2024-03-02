@@ -1,8 +1,6 @@
-from setuptools import Extension, setup
+from setuptools import setup
 from Cython.Build import cythonize
 
-extensions = [Extension("*", ["*.py"])]
-
 setup(
-    ext_modules = cythonize(extensions)
+    ext_modules = cythonize("*.py", exclude=['env/**','models','assets'])
 )

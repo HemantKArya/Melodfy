@@ -1,0 +1,59 @@
+
+name: Executable Build
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+      
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    
+      # Check-out repository
+      - uses: actions/checkout@v3
+      
+      # Setup Python
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+          cache: 'pip'
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Build python script into a stand-alone exe
+      - uses: Nuitka/Nuitka-Action@main
+        with:
+          script-name: main.py
+          # access-token: ${{ secrets.NUITKA_COMMERCIAL_ACCESS_TOKEN }}
+          onefile: true
+          enable-plugins: pyside6
+          disable-console: true
+          windows-icon-from-ico: assets/melodfy_logo_rounded.ico
+          
+      # Uploads artifact
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Melodfy_${{ runner.os }}_Build_${{ github.run_number }}
+          path: |
+            build/*.exe
+            build/*.bin
+            build/*.app/**/*
+            
