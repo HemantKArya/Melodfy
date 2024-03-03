@@ -4,3 +4,4 @@ from Cython.Build import cythonize
 setup(
     ext_modules = cythonize("*.py", exclude=['env/**','models','assets'])
 )
+

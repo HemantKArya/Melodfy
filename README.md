@@ -1,7 +1,7 @@
 ![Melodfy banner](./assets/melodfy_banner.png)
 
 ## Melodfy✨: AI-Powered Piano Audio to MIDI Converter 🎶
-
+![Melodfy ex b1](./assets/main4.png)
 Melodfy is an python application that utilizes the power of artificial intelligence (developed by ByteDance) to seamlessly convert audio recordings of piano playing into playable MIDI files. 
 
 **Features:**
@@ -11,12 +11,8 @@ Melodfy is an python application that utilizes the power of artificial intellige
 * **Unleash Creativity:** Breathe new life into your piano recordings by editing and manipulating them in MIDI format using your favorite digital audio workstation (DAW).
 * **Free and Open-Source:** Melodfy is released under a permissive license, allowing for free and unrestricted use, modification, and distribution for both personal and commercial purposes (with attribution).
 
-**How to Use:**
 
-1. **Download:** Download the latest version of Melodfy from the Releases section of this repository.(Availible soon)
-2. **Open:** Launch Melodfy and select the desired piano audio file.
-3. **Convert:** Click the "Convert" button to initiate the AI-powered conversion process.
-4. **Save:** Once the conversion is complete, save your new MIDI file to your preferred location.
+![Daw](./assets/main3.png)
 
 ### **Getting Started:**
 
@@ -29,7 +25,7 @@ git clone https://github.com/HemantKArya/Melodfy.git
 2. **Install dependencies:**
 
 Refer to the `requirements.txt` file for a list of required libraries and install them using your preferred package manager (e.g., `pip install -r requirements.txt`).
-And make sure FFMPEG is already installed in your system and availible through 'PATH'.
+And make sure FFMPEG is already installed in your system and availible through 'PATH'. [Download from here(FFMPEG)](https://www.ffmpeg.org/download.html).
 
 3. **Run the application:**
 
