@@ -504,12 +504,12 @@ class RegressionPostProcessor(object):
 
 def load_audio(path, sr=22050, mono=True, offset=0.0, duration=None,
     dtype=np.float32, res_type='kaiser_best', 
-    backends=[audioread.ffdec.FFmpegAudioFile]):
+    backends=[audioread.ffdec.FFmpegAudioFile],ffmpeg_path=None):
     """Load audio. Copied from librosa.core.load() except that ffmpeg backend is 
     always used in this function."""
 
     y = []
-    with audioread.audio_open(os.path.realpath(path), backends=backends) as input_file:
+    with audioread.audio_open(os.path.realpath(path), backends=backends,ffmpeg_path=ffmpeg_path) as input_file:
         sr_native = input_file.samplerate
         n_channels = input_file.channels
 

@@ -16,11 +16,12 @@ jobs:
 
   build:
 
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
+    # strategy:
+    #   matrix:
+    #     os: [ubuntu-latest, windows-latest]
       
-    runs-on: ${{ matrix.os }}
+    # runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     steps:
     
@@ -46,14 +47,27 @@ jobs:
           enable-plugins: pyside6
           disable-console: true
           windows-icon-from-ico: assets/melodfy_logo_rounded.ico
-          
+      - name: Pyinstaller Build
+        run: |
+          pyinstaller Melodfy.spec
+      - name: Download 7zip
+        run: |
+          Invoke-WebRequest https://www.7-zip.org/a/7zr.exe -OutFile 7zr.exe
+
+      - name: Download ffmpeg-windows
+        run: |
+          Invoke-WebRequest https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.7z -OutFile ffmpeg-release-essentials.7z
+          7zr x ffmpeg-release-essentials.7z
+          mv ffmpeg-6.1.1-essentials_build/bin/ffmpeg.exe dist/Melodfy/_internal/
+      
+      -name: Zip build
+        run: |
+          7zr a -t7z dist/Melodfy.7z dist/Melodfy
       # Uploads artifact
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: Melodfy_${{ runner.os }}_Build_${{ github.run_number }}
+          name: Melodfy_${{ runner.os }}_Build_v${{ github.run_number }}
           path: |
-            build/*.exe
-            build/*.bin
-            build/*.app/**/*
+            dist/Melodfy.7z
             

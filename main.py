@@ -1,3 +1,8 @@
+try:
+    import pyi_splash
+except:
+    pass
+
 from PySide6.QtWidgets import QApplication, QWidget,QFileDialog,QMessageBox
 from PySide6.QtCore import QAbstractListModel,Qt,QThreadPool,QRunnable,Slot,Signal,QObject,QSize
 from PySide6.QtGui import QTextOption,QIcon
@@ -15,16 +20,40 @@ import time
 import webbrowser
 
 
+model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models', 'model.onnx')
+ffmpeg_path = os.path.dirname(os.path.abspath(__file__))
+window_logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'melodfy_logo_rounded.png')
+
+
+
 
 itemQueue = Queue()
 isReady = False
+'''
+function to download model if model.onnx is not present from https://media.githubusercontent.com/media/HemantKArya/Melodfy/main/models/model.onnx?download=true and save it to models folder
+'''
+def downloadModel():
+    import requests
+    url = 'https://media.githubusercontent.com/media/HemantKArya/Melodfy/main/models/model.onnx?download=true'
+    r = requests.get(url, allow_redirects=True)
+    open(model_path, 'wb').write(r.content)
+    print('Model downloaded')
 
-
+if not os.path.exists(model_path):
+    downloadModel()
+else:
+    print('Model already present')
 
 print('Loading model...')
-ort_session = InferenceSession("./models/model.onnx")
+ort_session = InferenceSession(model_path)
 c = PianoTranscription(model=ort_session.run)
 print('Model loaded')
+
+
+try:
+    pyi_splash.close()
+except:
+    pass
 
 def getDirectoryPathFromFilePath(filepath):
     return os.path.dirname(filepath)
@@ -65,7 +94,7 @@ class Worker(QRunnable,):
             basename = os.path.basename(_item[0]).split(".")[0] + '.mid'
             self.outputDirectory2 = self.outputDirectory if self.outputDirectory not in [None,""] else getDirectoryPathFromFilePath(_item[0])
             self.outputDirectory2 = os.path.abspath(os.path.join(self.outputDirectory2,basename))
-            audio, _ = load_audio(_item[0], sr=sample_rate, mono=True)
+            audio, _ = load_audio(_item[0], sr=sample_rate, mono=True,ffmpeg_path=ffmpeg_path)
 
             c.transcribe(audio,self.outputDirectory2,
                                                 logUpdate=self.logUpdate,
@@ -253,15 +282,15 @@ u"}")
         with itemQueue.mutex:
             itemQueue.queue.clear()
         self.listModel.layoutChanged.emit()
-        self.logBrowser.setText("x=x=x=x=x=x=x=Reset=x=x=x=x=x=x=x\n")
+        self.logBrowser.setText("-------------------Reset--------------------\n")
     def openGithubRepo(self):
         webbrowser.open('https://github.com/HemantKArya/Melodfy')
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setWindowIcon(QIcon("./assets/melodfy_logo_rounded.png"))
+    app.setWindowIcon(QIcon(window_logo_path))
     window = Main_UI()
-    window.setWindowIcon(QIcon("./assets/melodfy_logo_rounded.png"))
+    window.setWindowIcon(QIcon(window_logo_path))
     window.show()
     app.exec()
