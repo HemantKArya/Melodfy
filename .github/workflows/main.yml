@@ -15,12 +15,7 @@ on:
 jobs:
 
   build:
-
-    # strategy:
-    #   matrix:
-    #     os: [ubuntu-latest, windows-latest]
       
-    # runs-on: ${{ matrix.os }}
     runs-on: windows-latest
 
     steps:
@@ -39,14 +34,6 @@ jobs:
           pip install -r requirements.txt
 
       # Build python script into a stand-alone exe
-      - uses: Nuitka/Nuitka-Action@main
-        with:
-          script-name: main.py
-          # access-token: ${{ secrets.NUITKA_COMMERCIAL_ACCESS_TOKEN }}
-          onefile: true
-          enable-plugins: pyside6
-          disable-console: true
-          windows-icon-from-ico: assets/melodfy_logo_rounded.ico
       - name: Pyinstaller Build
         run: |
           pyinstaller Melodfy.spec
@@ -70,4 +57,14 @@ jobs:
           name: Melodfy_${{ runner.os }}_Build_v${{ github.run_number }}
           path: |
             dist/Melodfy.7z
+          
+      # Uploads artifact
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: Melodfy_${{ runner.os }}_Build_${{ github.run_number }}
+          path: |
+            build/*.exe
+            build/*.bin
+            build/*.app/**/*
             
