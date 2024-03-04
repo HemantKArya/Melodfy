@@ -34,9 +34,6 @@ jobs:
           run: |
             Invoke-WebRequest https://www.7-zip.org/a/7zr.exe -OutFile 7zr.exe
         
-        - name: Move model.onnx
-          run: |
-            mv models/model.onnx dist/Melodfy/_internal/models/
 
         - name: Download ffmpeg-windows
           run: |

@@ -45,7 +45,13 @@ else:
     print('Model already present')
 
 print('Loading model...')
-ort_session = InferenceSession(model_path)
+try:
+    ort_session = InferenceSession(model_path)
+except:
+    print("Error found in moderl...")
+    downloadModel()
+    ort_session = InferenceSession(model_path)
+
 c = PianoTranscription(model=ort_session.run)
 print('Model loaded')
 
