@@ -38,7 +38,7 @@ jobs:
             7zr x ffmpeg-release-essentials.7z
             mv ffmpeg-6.1.1-essentials_build/bin/ffmpeg.exe dist/Melodfy/_internal/
 
-        -name: Zip build
+        - name: Zip build
           run: |
             7zr a -t7z dist/Melodfy.7z dist/Melodfy
         # Uploads artifact
