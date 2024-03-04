@@ -1,70 +1,59 @@
 
-name: Executable Build
+name: "Build & Release"
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    push: 
+        branches: main
 
 jobs:
-
-  build:
+    builds:
+        name: Build & Release
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v3
       
-    runs-on: windows-latest
+            # Setup Python
+            - name: Setup Python
+              uses: actions/setup-python@v4
+              with:
+                python-version: '3.11' # Version range or exact version of a Python version to use, using SemVer's version range syntax
+                architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+                cache: 'pip'
+            - run: |
+                python -m pip install --upgrade pip
+                pip install -r requirements.txt
 
-    steps:
-    
-      # Check-out repository
-      - uses: actions/checkout@v3
-      
-      # Setup Python
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11' # Version range or exact version of a Python version to use, using SemVer's version range syntax
-          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
-          cache: 'pip'
-      - run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+            # Build python script into a stand-alone exe
+            - name: Pyinstaller Build
+              run: |
+                pyinstaller Melodfy.spec
+            - name: Download 7zip
+              run: |
+                Invoke-WebRequest https://www.7-zip.org/a/7zr.exe -OutFile 7zr.exe
 
-      # Build python script into a stand-alone exe
-      - name: Pyinstaller Build
-        run: |
-          pyinstaller Melodfy.spec
-      - name: Download 7zip
-        run: |
-          Invoke-WebRequest https://www.7-zip.org/a/7zr.exe -OutFile 7zr.exe
+            - name: Download ffmpeg-windows
+              run: |
+                Invoke-WebRequest https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.7z -OutFile ffmpeg-release-essentials.7z
+                7zr x ffmpeg-release-essentials.7z
+                mv ffmpeg-6.1.1-essentials_build/bin/ffmpeg.exe dist/Melodfy/_internal/
 
-      - name: Download ffmpeg-windows
-        run: |
-          Invoke-WebRequest https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.7z -OutFile ffmpeg-release-essentials.7z
-          7zr x ffmpeg-release-essentials.7z
-          mv ffmpeg-6.1.1-essentials_build/bin/ffmpeg.exe dist/Melodfy/_internal/
-      
-      -name: Zip build
-        run: |
-          7zr a -t7z dist/Melodfy.7z dist/Melodfy
-      # Uploads artifact
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: Melodfy_${{ runner.os }}_Build_v${{ github.run_number }}
-          path: |
-            dist/Melodfy.7z
-          
-      # Uploads artifact
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: Melodfy_${{ runner.os }}_Build_${{ github.run_number }}
-          path: |
-            build/*.exe
-            build/*.bin
-            build/*.app/**/*
+            -name: Zip build
+              run: |
+                7zr a -t7z dist/Melodfy.7z dist/Melodfy
+            # Uploads artifact
+            - name: Upload Artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                name: Melodfy_${{ runner.os }}_Build_v${{ github.run_number }}
+                path: |
+                  dist/Melodfy.7z
+
+            # Uploads artifact
+            - name: Upload Artifacts
+              uses: actions/upload-artifact@v3
+              with:
+                name: Melodfy_${{ runner.os }}_Build_${{ github.run_number }}
+                path: |
+                  dist/Melodfy.7z
             
