@@ -23,6 +23,7 @@ jobs:
         - run: |
             python -m pip install --upgrade pip
             pip install -r requirements.txt
+            pip install Pillow
             pip install pyinstaller
 
         # Build python script into a stand-alone exe
@@ -41,14 +42,14 @@ jobs:
 
         - name: Zip build
           run: |
-            7zr a -t7z dist/Melodfy.7z dist/Melodfy
+            7zr a -t7z dist/Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.7z dist/Melodfy
         # Uploads artifact
         - name: Upload Artifacts
           uses: actions/upload-artifact@v3
           with:
             name: Melodfy_${{ runner.os }}_Build_v${{ github.run_number }}
             path: |
-              dist/Melodfy.7z
+              dist/Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.7z
 
         # Uploads artifact
         - name: Upload Artifacts
@@ -56,5 +57,11 @@ jobs:
           with:
             name: Melodfy_${{ runner.os }}_Build_${{ github.run_number }}
             path: |
-              dist/Melodfy.7z
+              dist/Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.7z
+        - name: Create Release
+          uses: ncipollo/release-action@v1
+          with:
+            artifacts: "dist/Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.7z"
+            tag: v1.0.0+${{github.run_number}}
+            token: ${{secrets.SECRET_KEY}}
             
