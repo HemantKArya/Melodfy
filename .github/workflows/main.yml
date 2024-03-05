@@ -41,9 +41,14 @@ jobs:
             ./7zr.exe x ffmpeg-release-essentials.7z
             mv ffmpeg-6.1.1-essentials_build/bin/ffmpeg.exe dist/Melodfy/_internal/
 
+        - name: move model.onnx
+          run: |
+            rm dist/Melodfy/_internal/models/model.onnx
+            mv model/model.onnx dist/Melodfy/_internal/models/
+
         - name: Zip build
           run: |
-            Compress-Archive -Path .\dist\Melodfy\ -DestinationPath .\dist\Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.7z
+            Compress-Archive -Path .\dist\Melodfy\ -DestinationPath .\dist\Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.zip
             
         # Uploads artifact
         - name: Upload Artifacts
@@ -51,19 +56,12 @@ jobs:
           with:
             name: Melodfy_${{ runner.os }}_Build_v${{ github.run_number }}
             path: |
-              dist/Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.7z
+              dist/Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.zip
 
-        # Uploads artifact
-        - name: Upload Artifacts
-          uses: actions/upload-artifact@v3
-          with:
-            name: Melodfy_${{ runner.os }}_Build_${{ github.run_number }}
-            path: |
-              dist/Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.7z
         - name: Create Release
           uses: ncipollo/release-action@v1
           with:
-            artifacts: "dist/Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.7z"
+            artifacts: "dist/Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.zip"
             tag: v1.0.0+${{github.run_number}}
             token: ${{secrets.SECRET_KEY}}
             
