@@ -43,7 +43,8 @@ jobs:
 
         - name: Zip build
           run: |
-            ./7zr.exe a -t7z dist/Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.7z dist/Melodfy
+            Compress-Archive -Path .\dist\Melodfy\ -DestinationPath .\dist\Melodfy_${{ runner.os }}_Build_${{ github.run_number }}.7z
+            
         # Uploads artifact
         - name: Upload Artifacts
           uses: actions/upload-artifact@v3
