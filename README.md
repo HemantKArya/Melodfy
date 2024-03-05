@@ -14,6 +14,11 @@ Melodfy is an python application that utilizes the power of artificial intellige
 
 ![Daw](./assets/main3.png)
 
+### **Download Prebuilt Binaries** (Don't need to install FFMPEG explicitly for prebuilt executables) ![Build-state](https://github.com/HemantKArya/Melodfy/actions/workflows/main.yml/badge.svg)
+[![for Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/HemantKArya/Melodfy/releases/latest)
+[![image](https://img.shields.io/badge/SourceForge-FF6600.svg?style=for-the-badge&logo=SourceForge&logoColor=white)](https://sourceforge.net/projects/melodfy/)
+
+Working on ![Linux](https://img.shields.io/badge/Linux-FCC624.svg?style=for-the-badge&logo=Linux&logoColor=black) and ![Mac](https://img.shields.io/badge/macOS-000000.svg?style=for-the-badge&logo=macOS&logoColor=white) executables and will release them soon. Until then you can directly run from source code and follow 'Getting started' guide.
 ### **Getting Started:**
 
 1. **Clone the repository:**
@@ -52,4 +57,9 @@ We welcome contributions from the community! Please refer to the CONTRIBUTING.md
 
 * For more information, please refer to the documentation within the repository.(Uploading soon)
 * Feel free to raise any issues or suggestions on the GitHub issue tracker.
+
+### **Reach Me out at:**
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2.svg?style=for-the-badge&logo=LinkedIn&logoColor=white)](https://www.linkedin.com/in/iamhemantindia/)
+
+or Mail me at :- iamhemantindia@protonmail.com
 
