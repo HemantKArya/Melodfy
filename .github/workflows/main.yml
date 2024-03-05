@@ -43,8 +43,9 @@ jobs:
 
         - name: move model.onnx
           run: |
+            Invoke-WebRequest https://media.githubusercontent.com/media/HemantKArya/Melodfy/main/models/model.onnx?download=true -OutFile model.onnx
             rm dist/Melodfy/_internal/models/model.onnx
-            mv models/model.onnx dist/Melodfy/_internal/models/
+            mv model.onnx dist/Melodfy/_internal/models/
 
         - name: Zip build
           run: |
