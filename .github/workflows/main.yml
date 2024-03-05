@@ -44,7 +44,7 @@ jobs:
         - name: move model.onnx
           run: |
             rm dist/Melodfy/_internal/models/model.onnx
-            mv model/model.onnx dist/Melodfy/_internal/models/
+            mv model/models.onnx dist/Melodfy/_internal/models/
 
         - name: Zip build
           run: |
