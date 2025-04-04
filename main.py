@@ -31,11 +31,11 @@ window_logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'ass
 itemQueue = Queue()
 isReady = False
 '''
-function to download model if model.onnx is not present from https://media.githubusercontent.com/media/HemantKArya/Melodfy/main/models/model.onnx?download=true and save it to models folder
+function to download model if model.onnx is not present from https://huggingface.co/krystv/piano_inference_onnx/resolve/main/model.onnx and save it to models folder
 '''
 def downloadModel():
     import requests
-    url = 'https://media.githubusercontent.com/media/HemantKArya/Melodfy/main/models/model.onnx?download=true'
+    url = 'https://huggingface.co/krystv/piano_inference_onnx/resolve/main/model.onnx'
     r = requests.get(url, allow_redirects=True)
     open(model_path, 'wb').write(r.content)
     print('Model downloaded')

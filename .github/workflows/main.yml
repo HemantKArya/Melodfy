@@ -44,7 +44,7 @@ jobs:
 
         - name: move model.onnx
           run: |
-            Invoke-WebRequest https://media.githubusercontent.com/media/HemantKArya/Melodfy/main/models/model.onnx?download=true -OutFile model.onnx
+            Invoke-WebRequest https://huggingface.co/krystv/piano_inference_onnx/resolve/main/model.onnx -OutFile model.onnx
             rm dist/Melodfy/_internal/models/model.onnx
             mv model.onnx dist/Melodfy/_internal/models/
 
