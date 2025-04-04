@@ -53,7 +53,7 @@ jobs:
             
         # Uploads artifact
         - name: Upload Artifacts
-          uses: actions/upload-artifact@v3
+          uses: actions/upload-artifact@v4
           with:
             name: Melodfy_${{ runner.os }}_Build_v${{ github.run_number }}
             path: |
