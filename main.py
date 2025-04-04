@@ -12,7 +12,7 @@ from utilities import load_audio
 from config import sample_rate
 from mainui import Ui_Form
 import sys
-from onnxruntime import InferenceSession
+from onnxruntime import InferenceSession, get_available_providers
 import os
 import qtawesome as qta
 from queue import Queue
@@ -21,7 +21,8 @@ import webbrowser
 
 
 model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models', 'model.onnx')
-ffmpeg_path = os.path.dirname(os.path.abspath(__file__))
+# ffmpeg_path = os.path.dirname(os.path.abspath(__file__))
+ffmpeg_path = "ffmpeg"
 window_logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'assets', 'melodfy_logo_rounded.png')
 
 
@@ -45,12 +46,30 @@ else:
     print('Model already present')
 
 print('Loading model...')
+def get_onnxruntime_session(model_path):
+    """"
+       Get ONNX Runtime session with available providers"
+    """
+    print("Checking available ONNX Runtime providers...")
+    available_providers = get_available_providers()
+    print(f"Available providers: {available_providers}")
+
+    # Check for GPU providers
+    if "CUDAExecutionProvider" in available_providers:
+        print("Using CUDAExecutionProvider for GPU inference.")
+        return InferenceSession(model_path, providers=["CUDAExecutionProvider", "CPUExecutionProvider"])
+    elif "DmlExecutionProvider" in available_providers:  # For OpenCL/DirectML on Windows
+        print("Using DmlExecutionProvider for GPU inference.")
+        return InferenceSession(model_path, providers=['DmlExecutionProvider', "CPUExecutionProvider"])
+    else:
+        print("No GPU provider available. Falling back to CPU.")
+        return InferenceSession(model_path, providers=["CPUExecutionProvider"])
 try:
-    ort_session = InferenceSession(model_path)
+    ort_session = get_onnxruntime_session(model_path)
 except:
     print("Error found in moderl...")
     downloadModel()
-    ort_session = InferenceSession(model_path)
+    ort_session = get_onnxruntime_session(model_path)
 
 c = PianoTranscription(model=ort_session.run)
 print('Model loaded')

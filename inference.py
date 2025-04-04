@@ -146,8 +146,6 @@ class PianoTranscription(object):
           device: 'cuda' | 'cpu'
         """
 
-        print('Using CPU for inference.')
-
         self.segment_samples = segment_samples
         self.frames_per_second = config.frames_per_second
         self.classes_num = config.classes_num
