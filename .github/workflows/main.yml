@@ -39,7 +39,8 @@ jobs:
           run: |
             Invoke-WebRequest https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.7z -OutFile ffmpeg-release-essentials.7z
             ./7zr.exe x ffmpeg-release-essentials.7z
-            mv ffmpeg-6.1.1-essentials_build/bin/ffmpeg.exe dist/Melodfy/_internal/
+            $ffmpegFolder = Get-ChildItem -Directory -Name | Where-Object { $_ -like "ffmpeg-*-essentials_build" }
+            Move-Item "$ffmpegFolder/bin/ffmpeg.exe" "dist/Melodfy/_internal/"
 
         - name: move model.onnx
           run: |
